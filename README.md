@@ -1,6 +1,27 @@
 API加解密SDK说明
 
-### 1. SDK初始化
+### 1. 引入依赖
+
+```
+<dependency>
+     <groupId>org.bouncycastle</groupId>
+     <artifactId>bcprov-jdk15on</artifactId>
+     <version>1.70</version>
+</dependency>
+<dependency>
+     <groupId>org.bouncycastle</groupId>
+     <artifactId>bcpkix-jdk15on</artifactId>
+     <version>1.70</version>
+</dependency>
+<dependency>
+     <groupId>com.jayway.jsonpath</groupId>
+     <artifactId>json-path</artifactId>
+     <version>2.8.0</version>
+</dependency>
+
+```
+
+### 2. SDK初始化
 
 ```
 // publicKey：登陆人脸核身控制台获取公钥，如果使用AES-256-CBC算法，公钥选择RSA公钥；如果使用SM4-GCM算法，公钥选择SM2公钥
@@ -9,7 +30,7 @@ API加解密SDK说明
 APICryptoTool tool = new APICryptoTool(publicKey, Algorithm.AES256CBC, 0);
 ```
 
-### 2. 入参加密
+### 3. 入参加密
 
 ```
 // reqBody：明文请求参数
@@ -36,7 +57,7 @@ List<String> res = tool.encrypt(reqBody, fields)
 list.forEach(System.out::println);
 ```
 
-### 3. 出参加密
+### 4. 出参加密
 
 ```
 // reqBody：明文请求参数
@@ -85,7 +106,7 @@ String resp = tool.decrypt(rsp, plaintextKey)
 System.out.print(resp);
 ```
 
-### 4. 出入参都加密
+### 5. 出入参都加密
 
 ```
 // reqBody：明文请求参数
