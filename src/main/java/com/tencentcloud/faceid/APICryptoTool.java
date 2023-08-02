@@ -167,17 +167,18 @@ public class APICryptoTool {
 
     private Map<String, byte[]> encryptData(byte[] key, byte[] plaintext, byte[] iv) throws Exception {
         Map<String, byte[]> map = new HashMap<>();
-        byte[] ciphertext = null;
         byte[] tag = null;
+        byte[] ciphertext = null;
         switch (this.algorithm) {
             case AES256CBC:
                 ciphertext = AES256CBC.aesEncrypt(key, plaintext, iv);
                 break;
             case SM4GCM:
-                ciphertext = SM4GCM.sm4Encrypt(key, plaintext, iv);
+                byte[] ciphertextTag = SM4GCM.sm4Encrypt(key, plaintext, iv);
                 tag = new byte[16];
-                System.arraycopy(ciphertext, ciphertext.length - tag.length, tag, 0, tag.length);
-                break;
+                System.arraycopy(ciphertextTag, ciphertextTag.length - tag.length, tag, 0, tag.length);
+                ciphertext = new byte[ciphertextTag.length - tag.length];
+                System.arraycopy(ciphertextTag, 0, ciphertext, 0, ciphertext.length);
             default:
         }
         map.put("ciphertext", ciphertext);
@@ -294,4 +295,5 @@ public class APICryptoTool {
         }
         return sb.toString();
     }
+
 }
