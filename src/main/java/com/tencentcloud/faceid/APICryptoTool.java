@@ -61,8 +61,8 @@ public class APICryptoTool {
         });
 
         Encryption encryption = new Encryption();
-        encryption.encryptList = new ArrayList<>();
-        encryption.tagList = new ArrayList<>();
+        encryption.EncryptList = new ArrayList<>();
+        encryption.TagList = new ArrayList<>();
 
         // 从缓存读取密钥
         String key = "";
@@ -95,9 +95,9 @@ public class APICryptoTool {
             byte[] ciphertext = map.getOrDefault("ciphertext", null);
             byte[] tag = map.getOrDefault("tag", null);
             context.set("$." + entry.getKey(), Base64.getEncoder().encodeToString(ciphertext));
-            encryption.encryptList.add(entry.getKey());
+            encryption.EncryptList.add(entry.getKey());
             if (tag != null) {
-                encryption.tagList.add(Base64.getEncoder().encodeToString(tag));
+                encryption.TagList.add(Base64.getEncoder().encodeToString(tag));
             }
         }
 
@@ -117,30 +117,30 @@ public class APICryptoTool {
         DocumentContext context = JsonPath.parse(rspBody);
         LinkedHashMap<String, Object> map = context.read("$.Response.Encryption");
         Encryption encryption = new Encryption();
-        encryption.algorithm = (String) map.get("Algorithm");
-        encryption.ciphertextBlob = (String) map.get("CiphertextBlob");
-        encryption.encryptList = (List<String>) map.get("EncryptList");
-        encryption.iv = (String) map.get("Iv");
-        encryption.tagList = (List<String>) map.get("TagList");
+        encryption.Algorithm = (String) map.get("Algorithm");
+        encryption.CiphertextBlob = (String) map.get("CiphertextBlob");
+        encryption.EncryptList = (List<String>) map.get("EncryptList");
+        encryption.Iv = (String) map.get("Iv");
+        encryption.TagList = (List<String>) map.get("TagList");
 
-        List<String> encryptList = encryption.encryptList;
+        List<String> encryptList = encryption.EncryptList;
         for (int i = 0; i < encryptList.size(); i++) {
             String field = encryptList.get(i);
             String val = context.read("$." + field);
-            if (Objects.equals(encryption.algorithm, Algorithm.AES256CBC.getValue())) {
-                byte[] iv = Base64.getDecoder().decode(encryption.iv);
+            if (Objects.equals(encryption.Algorithm, Algorithm.AES256CBC.getValue())) {
+                byte[] iv = Base64.getDecoder().decode(encryption.Iv);
                 byte[] ciphertext = Base64.getDecoder().decode(val);
                 byte[] plaintext = AES256CBC.aesDecrypt(plaintextKey.getBytes(), ciphertext, iv);
                 context.set("$." + field, new String(plaintext));
             }
 
-            if (Objects.equals(encryption.algorithm, Algorithm.SM4GCM.getValue())) {
-                if (encryption.tagList.size() != encryption.encryptList.size()) {
+            if (Objects.equals(encryption.Algorithm, Algorithm.SM4GCM.getValue())) {
+                if (encryption.TagList.size() != encryption.EncryptList.size()) {
                     throw new RuntimeException("encryption parameter value error");
                 }
-                byte[] iv = Base64.getDecoder().decode(encryption.iv);
+                byte[] iv = Base64.getDecoder().decode(encryption.Iv);
                 byte[] ciphertext = Base64.getDecoder().decode(val);
-                byte[] tag = Base64.getDecoder().decode(encryption.tagList.get(i));
+                byte[] tag = Base64.getDecoder().decode(encryption.TagList.get(i));
                 byte[] plaintext = SM4GCM.sm4Decrypt(plaintextKey.getBytes(), ciphertext, iv, tag);
                 context.set("$." + field, new String(plaintext));
             }
@@ -226,50 +226,50 @@ public class APICryptoTool {
     }
 
     static class Encryption {
-        List<String> encryptList;// 加密的字段名称
-        String ciphertextBlob;   // 加密后的对称密钥
-        String iv;   // 初始向量
-        String algorithm;   // 加密算法
-        List<String> tagList; // 消息摘要
+        List<String> EncryptList;// 加密的字段名称
+        String CiphertextBlob;   // 加密后的对称密钥
+        String Iv;   // 初始向量
+        String Algorithm;   // 加密算法
+        List<String> TagList; // 消息摘要
 
         public List<String> getEncryptList() {
-            return encryptList;
+            return EncryptList;
         }
 
         public void setEncryptList(List<String> encryptList) {
-            this.encryptList = encryptList;
+            EncryptList = encryptList;
         }
 
         public String getCiphertextBlob() {
-            return ciphertextBlob;
+            return CiphertextBlob;
         }
 
         public void setCiphertextBlob(String ciphertextBlob) {
-            this.ciphertextBlob = ciphertextBlob;
+            CiphertextBlob = ciphertextBlob;
         }
 
         public String getIv() {
-            return iv;
+            return Iv;
         }
 
         public void setIv(String iv) {
-            this.iv = iv;
+            Iv = iv;
         }
 
         public String getAlgorithm() {
-            return algorithm;
+            return Algorithm;
         }
 
         public void setAlgorithm(String algorithm) {
-            this.algorithm = algorithm;
+            Algorithm = algorithm;
         }
 
         public List<String> getTagList() {
-            return tagList;
+            return TagList;
         }
 
         public void setTagList(List<String> tagList) {
-            this.tagList = tagList;
+            TagList = tagList;
         }
     }
 
