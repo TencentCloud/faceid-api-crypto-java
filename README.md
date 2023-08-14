@@ -13,12 +13,6 @@ API加解密SDK说明
      <artifactId>bcpkix-jdk15on</artifactId>
      <version>1.70</version>
 </dependency>
-<dependency>
-     <groupId>com.jayway.jsonpath</groupId>
-     <artifactId>json-path</artifactId>
-     <version>2.8.0</version>
-</dependency>
-
 ```
 
 ### 2. SDK初始化
