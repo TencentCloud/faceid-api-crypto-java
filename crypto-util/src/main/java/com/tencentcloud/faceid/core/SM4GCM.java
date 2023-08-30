@@ -1,4 +1,4 @@
-package com.tencentcloud.faceid;
+package com.tencentcloud.faceid.core;
 
 import org.bouncycastle.crypto.engines.SM2Engine;
 import org.bouncycastle.crypto.params.ECDomainParameters;

@@ -1,4 +1,4 @@
-package com.tencentcloud.faceid;
+package com.tencentcloud.faceid.core;
 
 public enum Algorithm {
 

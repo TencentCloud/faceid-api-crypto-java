@@ -1,161 +1,76 @@
-API加解密SDK说明
+## API加解密DEMO
 
-### 1. 引入依赖
+### 引入依赖
 
-```
+#### 公共依赖
+
+```xml
 <dependency>
-     <groupId>org.bouncycastle</groupId>
-     <artifactId>bcprov-jdk15on</artifactId>
-     <version>1.70</version>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcprov-jdk15on</artifactId>
+    <version>1.70</version>
 </dependency>
 <dependency>
-     <groupId>org.bouncycastle</groupId>
-     <artifactId>bcpkix-jdk15on</artifactId>
-     <version>1.70</version>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcpkix-jdk15on</artifactId>
+    <version>1.70</version>
 </dependency>
 ```
 
-### 2. SDK初始化
+#### 人脸核身加解密SDK
 
-```
-// publicKey：登陆人脸核身控制台获取公钥，如果使用AES-256-CBC算法，公钥选择RSA公钥；如果使用SM4-GCM算法，公钥选择SM2公钥
-// algorithm：指定加密算法（AES-256-CBC或SM4GCM）
-// keyExpireTime：对称密钥过期时间，在过期时间内生成的对称密钥可复用。0表示不复用密钥
-APICryptoTool tool = new APICryptoTool(publicKey, Algorithm.AES256CBC, 0);
-```
+下载最新的[release](https://github.com/TencentCloud/faceid-api-crypto-java/releases)版本jar包，并在项目工程中引入。
+参考下方的接口Demo实现敏感信息加解密功能。
 
-### 3. 入参加密
+### 接口敏感信息加解密DEMO
 
-```
-// reqBody：明文请求参数
-// fields：要加密的字段列表
-// res[0]:加密的请求参数
-// res[1]:对称密钥明文 
-List<String> res = tool.encrypt(reqBody, fields)
+实名核身鉴权
+[DetectAuth](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FDetectAuth.java)
 
-example:
-输入：
-reqBody := `{
-    "Action": "BankCardVerification",
-    "Version": "2018-03-01",
-    "IdCard": "621103145623471011",
-    "Name": "张三",
-    "BankCard": "6214865712375011",
-    "CertType": 0
-}`
-List<String> fields = new ArrayList<String>();
-fields.Add("IdCard");
-fields.Add("Name");
+获取实名核身结果信息增强版
+[GetDetectInfoEnhanced](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FGetDetectInfoEnhanced.java)
 
-List<String> res = tool.encrypt(reqBody, fields)
-list.forEach(System.out::println);
-```
+获取E证通Token
+[GetFaceIdToken](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FGetFaceIdToken.java)
 
-### 4. 出参加密
+照片人脸核身
+[ImageRecognition](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FImageRecognition.java)
 
-```
-// reqBody：明文请求参数
-// fields：要加密的字段列表
-// res[0]:加密的请求参数
-// res[1]:对称密钥明文 
-List<String> res = tool.encrypt(reqBody, null)
+银行卡四要素核验
+[BankCard4EVerification](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FBankCard4EVerification.java)
 
-// rspBody：接口响应
-// plaintextKey：对称密钥明文
-// resp：解密后的明文响应
-String resp = tool.decrypt(rspBody, plaintextKey)
-example:
-{
-  "Action": "GetDetectInfoEnhanced",
-  "RuleId": '2',
-  "BizToken": '37C8960C-4673-4152-8122-1433C305C144'
-}
-List<String> res = tool.encrypt(reqBody, fields)
-String encryptReq = res.get(0);
-String plaintextKey = res.get(1);
+银行卡三要素核验
+[BankCardVerification](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FBankCardVerification.java)
 
-// 发送请求获得回包rsp
-// 此处mock一个，rsp一定带有Encryption字段
-rsp = {
-  Response: {
-    "Encryption": {
-      "Algorithm": "AES-256-CBC",
-      "CiphertextBlob": "DCaa541gYPA8ybDaAasY4C17K5CHo3s8/ZDNsaS8hH8Gr+qnA9RY53QswVOY4smcJsv5ToXPN6qOqruT9QVw5VPVglQ5YO60RjWabZKA+sF3BxDRMmrnuTKMNPwswen1mG4SfotyJ4IVv4PHomPZwzlZtGjm0CkXvgmnaHLxkck=",
-      "EncryptList": [
-        "Response.Text.IdCard",
-        "Response.Text.Name",
-      ],
-      "Iv": "vTjCqg1Xz6Lh0pJZCNjAAQ==",
-      "TagList": [],
-    },
-    "RequestId": "d55782f3-dc0f-4484-a067-ff2046fe659e",
-    "Text": {
-      "IdCard": "8TEJyC4YWALmK5U9cw+R+1Rvs4LuNRAAm8LQkwrJEa4=",
-      "Name": "QR3meQHDzArXCIuJIyETLzRtOjg0vjRxcYdKQTOE7vw=",
-    },
-  }
-}
+银行卡基础信息查询
+[CheckBankCardInformation](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FCheckBankCardInformation.java)
 
-String resp = tool.decrypt(rsp, plaintextKey)
-System.out.print(resp);
-```
+身份信息及有效期核验
+[CheckIdNameDate](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FCheckIdNameDate.java)
 
-### 5. 出入参都加密
+手机号二要素核验
+[CheckPhoneAndName](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FCheckPhoneAndName.java)
 
-```
-// reqBody：明文请求参数
-// fields：要加密的字段列表
-// res[0]:加密的请求参数
-// res[1]:对称密钥明文 
-List<String> res = tool.encrypt(reqBody, fields)
+身份证识别及信息核验
+[IdCardOCRVerification](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FIdCardOCRVerification.java)
 
-// rspBody：接口响应
-// plaintextKey：对称密钥明文
-// resp：解密后的明文响应
-String resp = tool.decrypt(rspBody, plaintextKey)
+身份证二要素核验
+[IdCardVerification](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FIdCardVerification.java)
 
-example:
-req :={
-  "IdCard": "440111111111111111",
-  "Name": "爱新觉罗永琪",
-  "RuleId": "2",
-  "BizToken": "37C8960C-4673-4152-8122-1433C305C144"
-}
-List<String> fields = new ArrayList<String>();
-fields.Add("IdCard");
-fields.Add("Name");
+手机号在网时长核验
+[MobileNetworkTimeVerification](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FMobileNetworkTimeVerification.java)
 
-List<String> res = tool.encrypt(reqBody, fields)
-String encryptReq = res.get(0);
-String plaintextKey = res.get(1);
+手机号状态查询
+[MobileStatus](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FMobileStatus.java)
 
-// 发送请求获得回包
-// 此处mock一个，rsp一定带有Encryption字段。
-rsp = {
-  "Response: {
-    "Encryption: {
-      "Algorithm: 'SM4-GCM',
-      "CiphertextBlob: 'BC3JNqinBaASuOhjP/WCkrCgtLm03d/stJMh1QgPKfdFoVdpySbZNah6iUIhoSI+EPML8dDgXJE2wkSZv8x029v+t2VoC6Lc6RW1gowi2tqwz2SNmb4qN/VrqMi1a3m/T3gXY42AbvORP90Jxqgr3hE=',
-      "EncryptList: [
-        "Response.Text.IdCard",
-        "Response.Text.Name",
-      ],
-      "Iv": "cHNm8k09p2d80owr",
-      "TagList": [
-        "meBiloynTRhQtOtLR2xccQ==",
-        "Anrq6V9s4jwBg+/mxW9Zeg==",
-      ],
-    },
-    "Text: {
-      "IdCard": "oUfaRWLLjR9MclkyFF68M7Ot",
-      "Name": "cvtbksVKVIn0pNWUw9815RI2",
-    }
-  }
-};
+手机号三要素核验
+[PhoneVerification](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FPhoneVerification.java)
 
-String resp = tool.decrypt(rsp, plaintextKey)
-System.out.print(resp);
-```
+手机号三要素核验（移动）
+[PhoneVerificationCMCC](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FPhoneVerificationCMCC.java)
 
+手机号三要素核验（电信）
+[PhoneVerificationCTCC](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FPhoneVerificationCTCC.java)
 
-
+手机号三要素核验（联通）
+[PhoneVerificationCUCC](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FPhoneVerificationCUCC.java)
