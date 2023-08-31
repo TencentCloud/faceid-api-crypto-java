@@ -30,6 +30,12 @@
             <!-- 请到https://search.maven.org/search?q=tencentcloud-sdk-java查询所有版本，最新版本如下 -->
             <version>3.1.833</version>
         </dependency>
+        <dependency>
+            <groupId>com.tencentcloud.faceid</groupId>
+            <artifactId>crypto-util</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 
