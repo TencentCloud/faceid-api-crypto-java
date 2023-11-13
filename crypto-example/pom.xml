@@ -6,18 +6,13 @@
     <parent>
         <groupId>com.tencentcloud.faceid</groupId>
         <artifactId>faceid-api-crypto-java</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>crypto-example</artifactId>
 
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
-        </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -28,15 +23,14 @@
             <artifactId>tencentcloud-sdk-java</artifactId>
             <!-- go to https://search.maven.org/search?q=tencentcloud-sdk-java and get the latest version. -->
             <!-- 请到https://search.maven.org/search?q=tencentcloud-sdk-java查询所有版本，最新版本如下 -->
-            <version>3.1.833</version>
+            <version>3.1.903</version>
         </dependency>
         <dependency>
             <groupId>com.tencentcloud.faceid</groupId>
             <artifactId>crypto-util</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
-
 
 </project>

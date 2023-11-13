@@ -4,13 +4,8 @@ import com.tencentcloud.faceid.core.CryptoProvider;
 import com.tencentcloud.faceid.core.Algorithm;
 import com.tencentcloud.faceid.core.Encryption;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
 
 
 public class CryptoUtil {
@@ -78,6 +73,77 @@ public class CryptoUtil {
             }
         }
         return map;
+    }
+
+    /**
+     * HTTP Body 加密
+     *
+     * @param algorithm 算法
+     * @param key       对称密钥
+     * @param reqBody   HTTP Body明文
+     * @return 加密后的数据
+     */
+    public static Map<String, Object> bodyEncrypt(Algorithm algorithm, String key, String reqBody) throws Exception {
+        // 生成对称密钥
+        key = isBlank(key) ? CryptoProvider.generateKey(algorithm) : key;
+        // 生成随机IV
+        byte[] iv = CryptoProvider.generateIv(algorithm);
+        Map<String, Object> map = new LinkedHashMap<>();
+        if (!isBlank(reqBody)) {
+            List<String> tagList = new ArrayList<>();
+            CryptoProvider.CiphertextEntity entity = CryptoProvider.encryptData(algorithm, key.getBytes(), reqBody.getBytes(), iv);
+            if (algorithm == Algorithm.SM4GCM) {
+                tagList.add(Base64.getEncoder().encodeToString(entity.tag));
+            }
+            Encryption encryption = new Encryption();
+            encryption.setAlgorithm(algorithm.getValue()); // 指定加密算法
+            encryption.setEncryptList(Collections.singletonList("EncryptionBody")); // 指定加密的字段名
+            encryption.setCiphertextBlob(CryptoProvider.encryptKey(algorithm, key)); // 加密的对称密钥
+            encryption.setIv(Base64.getEncoder().encodeToString(iv)); // 初始向量
+            encryption.setTagList(tagList); // SM4GCM算法生成的验证消息
+
+            map.put("Encryption", encryption);
+            map.put("EncryptedBody", entity.ciphertext);
+            return map;
+        }
+
+        Encryption encryption = new Encryption();
+        encryption.setAlgorithm(algorithm.getValue()); // 指定加密算法
+        encryption.setEncryptList(null); // 指定加密的字段名
+        encryption.setCiphertextBlob(CryptoProvider.encryptKey(algorithm, key)); // 加密的对称密钥
+        encryption.setIv(""); // 初始向量
+        encryption.setTagList(null); // SM4GCM算法生成的验证消息
+        map.put("Encryption", encryption);
+        return map;
+    }
+
+
+    /**
+     * HTTP Body 解密
+     *
+     * @param algorithm 算法
+     * @param key       对称密钥
+     * @param respBody  HTTP Body密文
+     * @return 解密后的数据
+     */
+    public static String bodyDecrypt(Algorithm algorithm, String key, String iv, String[] tag, String respBody) throws Exception {
+        if (isBlank(key) || isBlank(respBody)) {
+            throw new RuntimeException("parameter error.");
+        }
+        if (algorithm == Algorithm.SM4GCM) {
+            if (tag.length != 1 || isBlank(tag[0])) {
+                throw new RuntimeException("parameter error.");
+            }
+        }
+        byte[] plaintext = CryptoProvider.decryptData(algorithm, key.getBytes(),
+                Base64.getDecoder().decode(respBody),
+                Base64.getDecoder().decode(iv),
+                Base64.getDecoder().decode(tag[0]));
+
+        if (plaintext == null) {
+            return "";
+        }
+        return new String(plaintext);
     }
 
     private static boolean isBlank(String str) {
