@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>crypto-util</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
