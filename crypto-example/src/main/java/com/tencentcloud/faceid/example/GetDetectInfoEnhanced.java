@@ -40,13 +40,13 @@ public class GetDetectInfoEnhanced {
         Credential credential = new Credential(SECRET_ID, SECRET_KEY);
         FaceidClient client = new FaceidClient(credential, REGION);
         GetDetectInfoEnhancedResponse response = client.GetDetectInfoEnhanced(request);
-        System.out.println("ciphertext response: " + DetectAuthResponse.toJsonString(response));
+        System.out.println("ciphertext response: " + AbstractModel.toJsonString(response));
 
         // Step 6. 解密响应体
         String plaintext = CryptoUtil.bodyDecrypt(algorithm, key, response.getEncryption().getIv(),
                 response.getEncryption().getTagList(), response.getEncryptedBody());
         response = AbstractModel.fromJsonString(plaintext, GetDetectInfoEnhancedResponse.class);
-        System.out.println("plaintext response: " + GetDetectInfoEnhancedResponse.toJsonString(response));
+        System.out.println("plaintext response: " + AbstractModel.toJsonString(response));
     }
 
 }
