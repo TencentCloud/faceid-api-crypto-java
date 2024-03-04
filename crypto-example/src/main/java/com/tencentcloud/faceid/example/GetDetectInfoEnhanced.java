@@ -7,7 +7,6 @@ import com.tencentcloud.faceid.core.CryptoProvider;
 import com.tencentcloudapi.common.AbstractModel;
 import com.tencentcloudapi.common.Credential;
 import com.tencentcloudapi.faceid.v20180301.FaceidClient;
-import com.tencentcloudapi.faceid.v20180301.models.DetectAuthResponse;
 import com.tencentcloudapi.faceid.v20180301.models.GetDetectInfoEnhancedRequest;
 import com.tencentcloudapi.faceid.v20180301.models.GetDetectInfoEnhancedResponse;
 
@@ -31,9 +30,9 @@ public class GetDetectInfoEnhanced {
 
         // Step 3. TODO 根据您的业务需要，设置请求参数，详情参考api文档：https://cloud.tencent.com/document/product/1007/31816
         GetDetectInfoEnhancedRequest request = AbstractModel.fromJsonString(ciphertextDesc, GetDetectInfoEnhancedRequest.class);
-        request.setRuleId("1");
-        request.setInfoType("13");
-        request.setBizToken("95F6C73E-C533-47A2-A7CF-9B3A319F91");
+        request.setRuleId("4");
+        request.setInfoType("1");
+        request.setBizToken("1F85A1E4-3416-4460-9D9C-00DB9761916E");
         request.setIsEncryptResponse(true); // true表示对response的全报文内容加密
 
         // Step 5. 发起调用

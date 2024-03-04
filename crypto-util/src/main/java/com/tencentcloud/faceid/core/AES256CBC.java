@@ -7,25 +7,22 @@ import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.util.encoders.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
 import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Base64;
 
 public class AES256CBC {
 
     public static PublicKey loadRSAPublicKey(String publicKey) throws Exception {
-        byte[] bytes = Base64.getDecoder().decode(publicKey);
+        byte[] bytes = Base64.decode(publicKey);
         RSAPublicKey rsaPublicKey = RSAPublicKey.getInstance(bytes);
         SubjectPublicKeyInfo publicKeyInfo = new SubjectPublicKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE), rsaPublicKey);
         byte[] pkcs1 = publicKeyInfo.getEncoded();
@@ -35,7 +32,7 @@ public class AES256CBC {
     }
 
     public static PrivateKey loadRSAPrivateKey(String privateKey) throws Exception {
-        byte[] bytes = Base64.getDecoder().decode(privateKey);
+        byte[] bytes = Base64.decode(privateKey);
         RSAPrivateKey rsaPrivateKey = RSAPrivateKey.getInstance(bytes);
         PrivateKeyInfo privateKeyInfo = new PrivateKeyInfo(new AlgorithmIdentifier(PKCSObjectIdentifiers.rsaEncryption, DERNull.INSTANCE), rsaPrivateKey);
         byte[] pkcs1 = privateKeyInfo.getEncoded();

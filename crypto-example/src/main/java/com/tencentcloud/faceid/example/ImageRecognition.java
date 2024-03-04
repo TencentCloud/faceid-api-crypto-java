@@ -18,7 +18,7 @@ public class ImageRecognition {
     private static final String REGION = "ap-guangzhou";
     private static final String SECRET_ID = ""; // TODO 腾讯云密钥
     private static final String SECRET_KEY = ""; // TODO 腾讯云密钥
-    private static final Algorithm algorithm = Algorithm.SM4GCM; // 选择加密算法  Algorithm.AES256CBC、Algorithm.SM4GCM
+    private static final Algorithm algorithm = Algorithm.AES256CBC; // 选择加密算法  Algorithm.AES256CBC、Algorithm.SM4GCM
 
 
     public static void main(String[] args) throws Exception {

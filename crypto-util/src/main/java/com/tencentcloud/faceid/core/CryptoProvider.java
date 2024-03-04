@@ -2,17 +2,17 @@ package com.tencentcloud.faceid.core;
 
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Base64;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.util.Base64;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class CryptoProvider {
 
@@ -36,13 +36,13 @@ public class CryptoProvider {
                     rsaPublicKey = AES256CBC.loadRSAPublicKey(read(RAS_KEY));
                 }
                 bytes = AES256CBC.rsaEncrypt(key.getBytes(StandardCharsets.UTF_8), rsaPublicKey);
-                return Base64.getEncoder().encodeToString(bytes);
+                return new String(Base64.encode(bytes));
             case SM4GCM:
                 if (sm2PublicKey == null) {
                     sm2PublicKey = SM4GCM.loadSM2PublicKey(read(SM2_KEY));
                 }
                 bytes = SM4GCM.sm2Encrypt(key.getBytes(StandardCharsets.UTF_8), (BCECPublicKey) sm2PublicKey);
-                return Base64.getEncoder().encodeToString(bytes);
+                return new String(Base64.encode(bytes));
         }
         return null;
     }
@@ -80,9 +80,16 @@ public class CryptoProvider {
     }
 
 
-    public static String read(String pem) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(Base64.getDecoder().decode(pem))));
-        return reader.lines().filter(line -> !line.startsWith("-----")).collect(Collectors.joining());
+    public static String read(String pem) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(Base64.decode(pem))));
+        StringBuilder result = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            if (!line.startsWith("-----")) {
+                result.append(line);
+            }
+        }
+        return result.toString();
     }
 
     public static byte[] generateIv(Algorithm algorithm) {

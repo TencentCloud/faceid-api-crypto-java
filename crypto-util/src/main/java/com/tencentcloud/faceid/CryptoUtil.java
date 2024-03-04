@@ -3,6 +3,8 @@ package com.tencentcloud.faceid;
 import com.tencentcloud.faceid.core.CryptoProvider;
 import com.tencentcloud.faceid.core.Algorithm;
 import com.tencentcloud.faceid.core.Encryption;
+import org.bouncycastle.util.encoders.Base64;
+
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -26,10 +28,10 @@ public class CryptoUtil {
                 String v = entry.getValue();
                 encryptList.add(k);
                 CryptoProvider.CiphertextEntity entity = CryptoProvider.encryptData(algorithm, key.getBytes(), v.getBytes(), iv);
-                if (!Objects.isNull(entity.tag)) {
-                    tagList.add(Base64.getEncoder().encodeToString(entity.tag));
+                if (entity.tag != null) {
+                    tagList.add(new String(Base64.encode(entity.tag)));
                 }
-                map.put(k, Base64.getEncoder().encodeToString(entity.ciphertext));
+                map.put(k, new String(Base64.encode(entity.ciphertext)));
             }
         }
 
@@ -38,7 +40,7 @@ public class CryptoUtil {
         encryption.setAlgorithm(algorithm.getValue()); // 指定加密算法
         encryption.setEncryptList(encryptList); // 指定加密的字段名
         encryption.setCiphertextBlob(CryptoProvider.encryptKey(algorithm, key)); // 加密的对称密钥
-        encryption.setIv(Base64.getEncoder().encodeToString(iv)); // 初始向量
+        encryption.setIv(new String(Base64.encode(iv))); // 初始向量
         encryption.setTagList(tagList); // SM4GCM算法生成的验证消息
 
         map.put("Encryption", encryption);
@@ -65,9 +67,7 @@ public class CryptoUtil {
             if (algorithm == Algorithm.SM4GCM) {
                 tag = tagList.get(i);
             }
-            byte[] plaintext = CryptoProvider.decryptData(algorithm, key.getBytes(), Base64.getDecoder().decode(v),
-                    Base64.getDecoder().decode(iv),
-                    Base64.getDecoder().decode(tag));
+            byte[] plaintext = CryptoProvider.decryptData(algorithm, key.getBytes(), Base64.decode(v), Base64.decode(iv), Base64.decode(tag));
             if (plaintext != null) {
                 map.put(k, new String(plaintext));
             }
@@ -93,13 +93,13 @@ public class CryptoUtil {
             List<String> tagList = new ArrayList<>();
             CryptoProvider.CiphertextEntity entity = CryptoProvider.encryptData(algorithm, key.getBytes(), reqBody.getBytes(), iv);
             if (algorithm == Algorithm.SM4GCM) {
-                tagList.add(Base64.getEncoder().encodeToString(entity.tag));
+                tagList.add(new String(Base64.encode(entity.tag)));
             }
             Encryption encryption = new Encryption();
             encryption.setAlgorithm(algorithm.getValue()); // 指定加密算法
             encryption.setEncryptList(Collections.singletonList("EncryptionBody")); // 指定加密的字段名
             encryption.setCiphertextBlob(CryptoProvider.encryptKey(algorithm, key)); // 加密的对称密钥
-            encryption.setIv(Base64.getEncoder().encodeToString(iv)); // 初始向量
+            encryption.setIv(new String(Base64.encode(iv))); // 初始向量
             encryption.setTagList(tagList); // SM4GCM算法生成的验证消息
 
             map.put("Encryption", encryption);
@@ -135,10 +135,7 @@ public class CryptoUtil {
                 throw new RuntimeException("parameter error.");
             }
         }
-        byte[] plaintext = CryptoProvider.decryptData(algorithm, key.getBytes(),
-                Base64.getDecoder().decode(respBody),
-                Base64.getDecoder().decode(iv),
-                Base64.getDecoder().decode(tag[0]));
+        byte[] plaintext = CryptoProvider.decryptData(algorithm, key.getBytes(), Base64.decode(respBody), Base64.decode(iv), Base64.decode(tag[0]));
 
         if (plaintext == null) {
             return "";
@@ -147,7 +144,7 @@ public class CryptoUtil {
     }
 
     private static boolean isBlank(String str) {
-        return str == null || str.equals("");
+        return str == null || str.isEmpty();
     }
 
 
