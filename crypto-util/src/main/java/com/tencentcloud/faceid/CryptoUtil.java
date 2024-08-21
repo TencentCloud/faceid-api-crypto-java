@@ -111,7 +111,7 @@ public class CryptoUtil {
         encryption.setAlgorithm(algorithm.getValue()); // 指定加密算法
         encryption.setEncryptList(null); // 指定加密的字段名
         encryption.setCiphertextBlob(CryptoProvider.encryptKey(algorithm, key)); // 加密的对称密钥
-        encryption.setIv(""); // 初始向量
+        encryption.setIv(Base64.getEncoder().encodeToString(iv)); // 初始向量
         encryption.setTagList(null); // SM4GCM算法生成的验证消息
         map.put("Encryption", encryption);
         return map;
