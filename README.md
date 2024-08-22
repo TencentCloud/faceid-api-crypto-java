@@ -5,11 +5,11 @@
 #### 公共依赖
 
 ```xml
-# 腾讯云SDK的版本必须在3.1.903以上
+# 腾讯云SDK的版本必须在3.1.1086以上
 <dependency>
     <groupId>com.tencentcloudapi</groupId>
     <artifactId>tencentcloud-sdk-java</artifactId>
-    <version>3.1.903</version>
+    <version>3.1.1086</version>
 </dependency>
 <dependency>
     <groupId>org.bouncycastle</groupId>
@@ -80,3 +80,6 @@
 
 手机号三要素核验（联通）
 [PhoneVerificationCUCC](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FPhoneVerificationCUCC.java)
+
+身份证人像照片验真
+[CheckIdCardInformation](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FCheckIdCardInformation.java)
