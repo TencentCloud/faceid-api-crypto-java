@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.tencentcloud.faceid</groupId>
         <artifactId>faceid-api-crypto-java</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
 
     <artifactId>crypto-example</artifactId>
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>com.tencentcloud.faceid</groupId>
             <artifactId>crypto-util</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
