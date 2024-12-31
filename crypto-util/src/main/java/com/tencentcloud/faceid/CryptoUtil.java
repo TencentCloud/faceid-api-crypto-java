@@ -126,19 +126,21 @@ public class CryptoUtil {
      * @param respBody  HTTP Body密文
      * @return 解密后的数据
      */
-    public static String bodyDecrypt(Algorithm algorithm, String key, String iv, String[] tag, String respBody) throws Exception {
+    public static String bodyDecrypt(Algorithm algorithm, String key, String iv, String[] tags, String respBody) throws Exception {
+        String tag = "";
         if (isBlank(key) || isBlank(respBody)) {
             throw new RuntimeException("parameter error.");
         }
         if (algorithm == Algorithm.SM4GCM) {
-            if (tag.length != 1 || isBlank(tag[0])) {
+            if (tags.length != 1 || isBlank(tags[0])) {
                 throw new RuntimeException("parameter error.");
             }
+            tag = tags[0];
         }
         byte[] plaintext = CryptoProvider.decryptData(algorithm, key.getBytes(),
                 Base64.getDecoder().decode(respBody),
                 Base64.getDecoder().decode(iv),
-                Base64.getDecoder().decode(tag[0]));
+                Base64.getDecoder().decode(tag));
 
         if (plaintext == null) {
             return "";
