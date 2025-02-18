@@ -4,12 +4,15 @@ import com.tencentcloud.faceid.core.CryptoProvider;
 import com.tencentcloud.faceid.core.Algorithm;
 import com.tencentcloud.faceid.core.Encryption;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 
 
 public class CryptoUtil {
-
+    // 设置编码
+    public final static Charset CHARSET = StandardCharsets.UTF_8;
 
     public static Map<String, Object> encrypt(Algorithm algorithm, String key, Map<String, String> args) throws Exception {
         // 生成对称密钥
@@ -25,7 +28,7 @@ public class CryptoUtil {
                 String k = entry.getKey();
                 String v = entry.getValue();
                 encryptList.add(k);
-                CryptoProvider.CiphertextEntity entity = CryptoProvider.encryptData(algorithm, key.getBytes(), v.getBytes(), iv);
+                CryptoProvider.CiphertextEntity entity = CryptoProvider.encryptData(algorithm, key.getBytes(CHARSET), v.getBytes(CHARSET), iv);
                 if (!Objects.isNull(entity.tag)) {
                     tagList.add(Base64.getEncoder().encodeToString(entity.tag));
                 }
@@ -61,15 +64,15 @@ public class CryptoUtil {
         for (int i = 0; i < keys.size(); i++) {
             String k = keys.get(i);
             String v = args.get(k);
-            String tag = null;
+            byte[] tag = new byte[0];
             if (algorithm == Algorithm.SM4GCM) {
-                tag = tagList.get(i);
+                tag = tagList.get(i).getBytes(CHARSET);
             }
-            byte[] plaintext = CryptoProvider.decryptData(algorithm, key.getBytes(), Base64.getDecoder().decode(v),
-                    Base64.getDecoder().decode(iv),
+            byte[] plaintext = CryptoProvider.decryptData(algorithm, key.getBytes(CHARSET), Base64.getDecoder().decode(v),
+                    Base64.getDecoder().decode(iv.getBytes(CHARSET)),
                     Base64.getDecoder().decode(tag));
             if (plaintext != null) {
-                map.put(k, new String(plaintext));
+                map.put(k, new String(plaintext, CHARSET));
             }
         }
         return map;
@@ -91,7 +94,7 @@ public class CryptoUtil {
         Map<String, Object> map = new LinkedHashMap<>();
         if (!isBlank(reqBody)) {
             List<String> tagList = new ArrayList<>();
-            CryptoProvider.CiphertextEntity entity = CryptoProvider.encryptData(algorithm, key.getBytes(), reqBody.getBytes(), iv);
+            CryptoProvider.CiphertextEntity entity = CryptoProvider.encryptData(algorithm, key.getBytes(CHARSET), reqBody.getBytes(CHARSET), iv);
             if (algorithm == Algorithm.SM4GCM) {
                 tagList.add(Base64.getEncoder().encodeToString(entity.tag));
             }
@@ -137,15 +140,15 @@ public class CryptoUtil {
             }
             tag = tags[0];
         }
-        byte[] plaintext = CryptoProvider.decryptData(algorithm, key.getBytes(),
-                Base64.getDecoder().decode(respBody),
-                Base64.getDecoder().decode(iv),
-                Base64.getDecoder().decode(tag));
+        byte[] plaintext = CryptoProvider.decryptData(algorithm, key.getBytes(CHARSET),
+                Base64.getDecoder().decode(respBody.getBytes(CHARSET)),
+                Base64.getDecoder().decode(iv.getBytes(CHARSET)),
+                Base64.getDecoder().decode(tag.getBytes(CHARSET)));
 
         if (plaintext == null) {
             return "";
         }
-        return new String(plaintext);
+        return new String(plaintext, CHARSET);
     }
 
     private static boolean isBlank(String str) {
