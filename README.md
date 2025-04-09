@@ -83,3 +83,6 @@
 
 身份证人像照片验真
 [CheckIdCardInformation](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FCheckIdCardInformation.java)
+
+AI人脸防护盾
+[DetectAIFakeFaces](crypto-example%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftencentcloud%2Ffaceid%2Fexample%2FDetectAIFakeFaces.java)
